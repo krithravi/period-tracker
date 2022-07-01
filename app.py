@@ -2,6 +2,7 @@ import dash
 from dash import dcc
 from dash import html
 import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 from datetime import timedelta, date
@@ -11,7 +12,7 @@ import sys
 app = dash.Dash(__name__)
 
 filename = sys.argv[1]
-print(filename)
+print("Reading from: " + filename)
 
 data = pd.read_csv(filename)
 data['Date'] = pd.to_datetime(data['Date']).dt.date
@@ -41,29 +42,37 @@ pred = pred[len(data) - 1]
 if (today > pred):
      pred = today
 
-# print("Likely to start as early as " + str(pred - timedelta(days = std_len)))
+
+early = pred - timedelta(days = std_len)
+if (today > early):
+    early = today
+# print("Likely to start as early as " + str(early))
 # print("Next predicted start date: " + str(pred))
 
 
+fig = go.Figure()
+fig.add_trace(go.Box(
+    x=lengths,
+    name='Days',
+    marker_color='lightseagreen',
+    boxmean='sd' # represent mean
+))
 
-fig = px.box(lengths,
-        orientation = 'h',
-        title = 'Distribution of cycle lengths',
-        labels = {
-            'value': 'Length in days',
-            'variable' : ''
-        }
+fig.update_layout(
+    xaxis=dict(title='Length in days', zeroline=False),
+    title=dict(text='Distribution of cycle lengths')
 )
 
 app.layout = html.Div([
-    html.H1("App"),
+    html.H1("Period Tracker App"),
     html.P("Average cycle length: " + str(avg_len) + " days"),
     html.P("Cycle length standard deviation: " + str(std_len) + " day(s)"),
-    html.P("Average period length: " + str(data.iloc[:, 1].mean()) + " day(s)"),
+    html.P("Average period length: " + str(round(data.iloc[:, 1].mean(), 2)) + " day(s)"),
     # html.P("Distribution of cycle lengths"),
-    dcc.Graph(id="life-exp-vs-gdp", figure=fig),
-    html.P("Next predicted start date: " + str(pred)),
-    html.P("Likely to start as early as " + str(pred - timedelta(days = std_len)))
+    dcc.Graph(id="box-lengths", figure=fig),
+    html.P("Next predicted start date: " + pred.strftime("%A, %B %d, %Y")),
+    html.P("Likely to start as early as " + early.strftime("%A, %B %d, %Y"))
+
 ])
 
 
