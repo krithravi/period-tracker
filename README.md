@@ -11,7 +11,7 @@ run `python app.py <filename>`.
 This file should contain all the data you want as a CSV.
 I've left a testing dataset called `data.csv` for a starter!
 
-After running that, you'll get something like the following:
+After running that, you'll get something like the following (based off some testing data):
 ![Sample demo](sample.png)
 
 # Future
