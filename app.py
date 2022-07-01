@@ -19,6 +19,7 @@ data['Date'] = pd.to_datetime(data['Date']).dt.date
 # sort by date just in case
 data = data.sort_values(by = 'Date')
 lengths = data.Date.diff().dropna().astype('timedelta64[D]')
+lengths.name = 'Days'
 
 avg_len = round(lengths.mean(), 2)
 std_len = round(lengths.std(), 2)
@@ -44,14 +45,22 @@ if (today > pred):
 # print("Next predicted start date: " + str(pred))
 
 
-fig = px.box(x = lengths)
+
+fig = px.box(lengths,
+        orientation = 'h',
+        title = 'Distribution of cycle lengths',
+        labels = {
+            'value': 'Length in days',
+            'variable' : ''
+        }
+)
 
 app.layout = html.Div([
     html.H1("App"),
     html.P("Average cycle length: " + str(avg_len) + " days"),
     html.P("Cycle length standard deviation: " + str(std_len) + " day(s)"),
     html.P("Average period length: " + str(data.iloc[:, 1].mean()) + " day(s)"),
-    html.P("Distribution of cycle lengths"),
+    # html.P("Distribution of cycle lengths"),
     dcc.Graph(id="life-exp-vs-gdp", figure=fig),
     html.P("Next predicted start date: " + str(pred)),
     html.P("Likely to start as early as " + str(pred - timedelta(days = std_len)))
