@@ -71,7 +71,9 @@ app.layout = html.Div([
     # html.P("Distribution of cycle lengths"),
     dcc.Graph(id="box-lengths", figure=fig),
     html.P("Next predicted start date: " + pred.strftime("%A, %B %d, %Y")),
+    html.P("That's in " + str((pred - today))[:-9] + "!"),
     html.P("Likely to start as early as " + early.strftime("%A, %B %d, %Y"))
+    # html.H2("Enter a new record!")
 
 ])
 
