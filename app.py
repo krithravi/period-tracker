@@ -63,18 +63,18 @@ fig.update_layout(
     title=dict(text='Distribution of cycle lengths')
 )
 
+day_num = int((today - last_date).dt.days)
+
 app.layout = html.Div([
     html.H1("Period Tracker App"),
+    html.P("Next predicted start date: " + pred.strftime("%A, %B %d, %Y") + ". That's in " + str((pred - today))[:-9] + "!"),
+    html.P("Likely to start as early as " + early.strftime("%A, %B %d, %Y") + ". That's in " + str((early - today))[:-9] + "!"),
+    html.P("You're on day " + str(day_num) + " of your cycle."),
+    dcc.Graph(id="box-lengths", figure=fig),
     html.P("Average cycle length: " + str(avg_len) + " days"),
     html.P("Cycle length standard deviation: " + str(std_len) + " day(s)"),
     html.P("Average period length: " + str(round(data.iloc[:, 1].mean(), 2)) + " day(s)"),
-    # html.P("Distribution of cycle lengths"),
-    dcc.Graph(id="box-lengths", figure=fig),
-    html.P("Next predicted start date: " + pred.strftime("%A, %B %d, %Y")),
-    html.P("That's in " + str((pred - today))[:-9] + "!"),
-    html.P("Likely to start as early as " + early.strftime("%A, %B %d, %Y"))
-    # html.H2("Enter a new record!")
-
+ 
 ])
 
 
