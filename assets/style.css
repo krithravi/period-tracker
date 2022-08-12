@@ -1,7 +1,19 @@
-@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+@font-face {
+    font-family: 'Ubuntu';
+    src: url('Ubuntu-R.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ubuntu-Mono';
+    src: url('UbuntuMono-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
 
 body {
-	font-family: 'Ubuntu', sans-serif;
+	font-family: Ubuntu, Helvetica, sans-serif;
 	line-height: 1.6;
 	font-size: 16px;
 	color: #094703;
@@ -11,4 +23,20 @@ body {
 
 }
 
+.fleft {
+	float: left;
+}
 
+.fright {
+	float: right;
+}
+
+.smush {
+	max-width: 450px;
+	margin: auto;
+	margin-bottom: 2.5in;
+}
+
+pre {
+	font-family: Ubuntu-Mono;
+}

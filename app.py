@@ -1,15 +1,18 @@
 import dash
-from dash import dcc
-from dash import html
+from dash import dcc, html
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 from datetime import timedelta, date
 from math import ceil
+import calendar
 import sys
 
 app = dash.Dash(__name__)
+app.title = 'Period Tracker'
+
+calendar.setfirstweekday(calendar.SUNDAY)
 
 filename = sys.argv[1]
 print("Reading from: " + filename)
@@ -27,15 +30,13 @@ std_len = round(lengths.std(), 2)
 # print("Average cycle length: " + str(avg_len) + " days")
 # print("Cycle length std. dev.: " + str(std_len) + " day(s)")
 # print("Average period length: " + str(data.iloc[:, 1].mean()))
-# print()
 today = date.today()
 # print("Today's date: ", today)
 
 
-last_date = data.tail(1)['Date']
+last_date = data.tail(1)['Date'][len(data) - 1]
 
 pred = last_date + timedelta(days = avg_len)
-pred = pred[len(data) - 1]
 
 
 # return later of (today, pred)
@@ -54,7 +55,7 @@ fig = go.Figure()
 fig.add_trace(go.Box(
     x=lengths,
     name='Days',
-    marker_color='lightseagreen',
+    marker_color='#299b5b',
     boxmean='sd' # represent mean
 ))
 
@@ -63,20 +64,26 @@ fig.update_layout(
     title=dict(text='Distribution of cycle lengths')
 )
 
-day_num = int((today - last_date).dt.days)
+day_num = (today - last_date).days + 1
 
 app.layout = html.Div([
-    html.H1("Period Tracker App"),
-    html.P("Next predicted start date: " + pred.strftime("%A, %B %d, %Y") + ". That's in " + str((pred - today))[:-9] + "!"),
-    html.P("Likely to start as early as " + early.strftime("%A, %B %d, %Y") + ". That's in " + str((early - today))[:-9] + "!"),
-    html.P("You're on day " + str(day_num) + " of your cycle."),
-    dcc.Graph(id="box-lengths", figure=fig),
-    html.P("Average cycle length: " + str(avg_len) + " days"),
-    html.P("Cycle length standard deviation: " + str(std_len) + " day(s)"),
-    html.P("Average period length: " + str(round(data.iloc[:, 1].mean(), 2)) + " day(s)"),
- 
-])
+    html.H1("Period Tracker 💚"),
+    html.Ul([
+        html.Li("Date of last cycle: " + last_date.strftime("%A, %B %d, %Y") + ". That was " + str((last_date - today).days * -1) + " day(s) ago."),
+        html.Li("Next predicted start date: " + pred.strftime("%A, %B %d, %Y") + ". That's in " + str((pred - today).days)+ " day(s)."),
+        html.Li("Likely to start as early as " + early.strftime("%A, %B %d, %Y") + ". That's in " + str((early - today).days) + " day(s)."),
+        html.Li(["You're on ", html.U("day " + str(day_num)), " of your cycle."])
+    ]),
+    html.Div([html.Pre(calendar.month(today.year, today.month), className="fleft"), html.Pre(calendar.month(pred.year, pred.month), className="fright")], className="smush"),
+    html.H2("Stats!"),
+    html.Ul([
+        html.Li("Average cycle length: " + str(avg_len) + " days"),
+        html.Li("Cycle length standard deviation: " + str(std_len) + " day(s)"),
+        html.Li("Average period length: " + str(round(data.iloc[:, 1].mean(), 2)) + " day(s)")
+    ]),
+    dcc.Graph(id="box-lengths", figure=fig)
 
+])
 
 if __name__ == "__main__":
     app.run_server(debug=True)
