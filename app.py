@@ -74,14 +74,15 @@ app.layout = html.Div([
         html.Li("Likely to start as early as " + early.strftime("%A, %B %d, %Y") + ". That's in " + str((early - today).days) + " day(s)."),
         html.Li(["You're on ", html.U("day " + str(day_num)), " of your cycle."])
     ]),
-    html.Div([html.Pre(calendar.month(today.year, today.month), className="fleft"), html.Pre(calendar.month(pred.year, pred.month), className="fright")], className="smush"),
+    html.Div([html.Pre(calendar.month(last_date.year, last_date.month), className="fleft"), html.Pre(calendar.month(pred.year, pred.month), className="fright")], className="smush"),
     html.H2("Stats!"),
     html.Ul([
         html.Li("Average cycle length: " + str(avg_len) + " days"),
         html.Li("Cycle length standard deviation: " + str(std_len) + " day(s)"),
         html.Li("Average period length: " + str(round(data.iloc[:, 1].mean(), 2)) + " day(s)")
     ]),
-    dcc.Graph(id="box-lengths", figure=fig)
+    dcc.Graph(id="box-lengths", figure=fig),
+    html.Footer("Built with lots of love ❤️")
 
 ])
 
