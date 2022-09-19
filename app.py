@@ -109,7 +109,7 @@ app.layout = html.Div([
     html.Ul([
         html.Li("Date of last cycle: " + last_date.strftime("%A, %B %d, %Y") + ". "),
         html.Ul([
-            html.Li("That was " + str((last_date - today).days * -1) + " day(s) ago."),
+            html.Li("That was " + str((today - last_date).days) + " day(s) ago."),
         ]),
 
         html.Li("Next predicted cycle: " + pred.strftime("%A, %B %d, %Y") + " to " + pred_end.strftime("%A, %B %d, %Y") + ". "),
