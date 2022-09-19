@@ -17,6 +17,7 @@ I've left a testing dataset called `data.csv` as a starter!
 
 Head over to (probably) `http://127.0.0.1:8050` where you'll see the app served!
 After that, you'll get something like the following (based off the `data.csv` testing data):
+
 ![Sample demo](sample.png)
 
 ## How it works
