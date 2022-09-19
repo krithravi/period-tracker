@@ -107,12 +107,12 @@ day_num = (today - last_date).days + 1
 app.layout = html.Div([
     html.H1("Period Tracker 💚"),
     html.Ul([
-        html.Li("Date of last cycle: " + last_date.strftime("%A, %B %d, %Y") + ". "),
+        html.Li("Date of last cycle: " + last_date.strftime("%A, %B %d, %Y") + "."),
         html.Ul([
             html.Li("That was " + str((today - last_date).days) + " day(s) ago."),
         ]),
 
-        html.Li("Next predicted cycle: " + pred.strftime("%A, %B %d, %Y") + " to " + pred_end.strftime("%A, %B %d, %Y") + ". "),
+        html.Li("Next predicted cycle: " + pred.strftime("%A, %B %d, %Y") + " to " + pred_end.strftime("%A, %B %d, %Y") + "."),
         html.Ul([
             html.Li("That's in " + str((pred - today).days)+ " day(s).")
         ]),
@@ -125,7 +125,9 @@ app.layout = html.Div([
         html.Li(["You're on ", html.U("day " + str(day_num)), " of your cycle."]),
         html.Li(fertile_str)
     ]),
-    html.Div([html.Pre(calendar.month(last_date.year, last_date.month), className="fleft"), html.Pre(calendar.month(pred.year, pred.month), className="fright")], className="smush"),
+    html.Div([
+        html.Pre(calendar.month(last_date.year, last_date.month), className="fleft"), 
+        html.Pre(calendar.month(pred.year, pred.month), className="fright")], className="smush"),
     html.H2("Stats!"),
     html.Ul([
         html.Li("Average cycle length (outliers removed): " + str(avg_len) + " days"),
