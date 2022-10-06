@@ -13,10 +13,10 @@ You should probably first clone the repo.
 After installing the necessary dependencies (probably `pandas`, `dash`, and `numpy`),
 run `python app.py <filename>`.
 This data file should contain all the data you want as a CSV.
-I've left a testing dataset called `data.csv` as a starter!
+I've left a testing dataset called `good.csv` in the `test` directory as a starter!
 
 Head over to (probably) `http://127.0.0.1:8050` where you'll see the app served!
-After that, you'll get something like the following (based off the `data.csv` testing data):
+After that, you'll get something like the following (based off the `good.csv` dataset):
 
 ![Sample demo](sample.png)
 

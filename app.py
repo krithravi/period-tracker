@@ -18,7 +18,6 @@ fertile_window_length = 5
 fertile_window_num_days_prior  = 14
 ######################### END   USER MODIFICATION ######################### 
 
-
 app = dash.Dash(__name__)
 app.title = 'Period Tracker'
 
@@ -31,7 +30,7 @@ data['Date'] = pd.to_datetime(data['Date']).dt.date
 # sort by date just in case
 data = data.sort_values(by = 'Date')
 lengths = data.Date.diff().dropna().astype('timedelta64[D]')
-lengths.name = 'Days'
+# lengths.name = 'Days'
 
 # filtering outliers by 1.5 IQR rule
 def filter_outliers(data):
@@ -75,7 +74,7 @@ else:
 fig = go.Figure()
 fig.add_trace(go.Box(
     x=lengths,
-    name='Days',
+    name='days',
     marker_color='#299b5b',
     boxpoints='outliers',
     boxmean='sd' # represent mean
@@ -86,11 +85,36 @@ fig.update_layout(
     title=dict(text='Distribution of cycle lengths')
 )
 
+# histogram of cycle lengths
+# cycle_hist = px.histogram(
+#     x = lengths,
+#     title = "Distribution of cycle lengths",
+#     color_discrete_sequence = ['#2da84a'],
+#     opacity = 0.6,
+#     range_x = [min(lengths) - 2, max(lengths) + 2],
+#     marginal = "violin"
+# )
+
+cycle_hist = go.Figure()
+cycle_hist.add_trace(go.Histogram(
+    x=lengths,
+    name='days', # name used in legend and hover labels
+    marker_color='#2dc850',
+    opacity=0.7,
+    yhoverformat = "d days"
+))
+
+cycle_hist.update_layout(
+    xaxis=dict(title='Length in days'),
+    yaxis=dict(title='Count'),
+    title=dict(text='Distribution of period lengths')
+)
+
 # boxplot of period lengths
 period_length = go.Figure()
 period_length.add_trace(go.Box(
     x=data['Length'],
-    name='Days',
+    name='days',
     marker_color='#289b71',
     boxpoints='outliers',
     boxmean='sd' # represent mean
@@ -104,6 +128,10 @@ period_length.update_layout(
 
 day_num = (today - last_date).days + 1
 
+# calendars
+calendar_one = calendar.month(last_date.year, last_date.month)
+calendar_two = calendar.month(last_date.year, last_date.month + 1) if last_date.month <= 11 else calendar.month(last_date.year + 1, 1) 
+
 app.layout = html.Div([
     html.H1("Period Tracker 💚"),
     html.Ul([
@@ -114,26 +142,27 @@ app.layout = html.Div([
 
         html.Li("Next predicted cycle: " + pred.strftime("%A, %B %d, %Y") + " to " + pred_end.strftime("%A, %B %d, %Y") + "."),
         html.Ul([
-            html.Li("That's in " + str((pred - today).days)+ " day(s).")
+            html.Li("That's in " + str(max(0, (pred - today).days))+ " day(s).")
         ]),
 
         html.Li("Likely to start as early as " + early.strftime("%A, %B %d, %Y") + "."),
         html.Ul([
-            html.Li(" That's in " + str((early - today).days) + " day(s).")
+            html.Li(" That's in " + str(max(0, (early - today).days)) + " day(s).")
         ]),
 
         html.Li(["You're on ", html.U("day " + str(day_num)), " of your cycle."]),
         html.Li(fertile_str)
     ]),
     html.Div([
-        html.Pre(calendar.month(last_date.year, last_date.month), className="fleft"), 
-        html.Pre(calendar.month(pred.year, pred.month), className="fright")], className="smush"),
+        html.Pre(calendar_one, className="fleft"), 
+        html.Pre(calendar_two, className="fright")], className="smush"),
     html.H2("Stats!"),
     html.Ul([
         html.Li("Average cycle length (outliers removed): " + str(avg_len) + " days"),
         html.Li("Cycle length standard deviation (outliers removed): " + str(std_len) + " day(s)"),
         html.Li("Average period length: " + str(round(data.iloc[:, 1].mean(), 2)) + " day(s)")
     ]),
+    dcc.Graph(id ="hist-lengths", figure=cycle_hist),
     dcc.Graph(id="box-lengths", figure=fig),
     dcc.Graph(id="period-lengths", figure=period_length),
     html.Footer("Built with lots of love ❤️")
