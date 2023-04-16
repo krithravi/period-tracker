@@ -49,16 +49,16 @@ avg_cycle_len = round(filter_outliers(data['Length']).mean(), 2)
 
 today = date.today()
 last_date = data.tail(1)['Date'][len(data) - 1]
-pred = last_date + timedelta(days = avg_len)
+pred = last_date + timedelta(days = round(avg_len))
 
 # return later of (today, pred)
 if (today > pred):
      pred = today
 
-pred_end = pred + timedelta(days = avg_cycle_len)
+pred_end = pred + timedelta(days = round(avg_cycle_len))
 
 # return earlier of (early, today)
-early = pred - timedelta(days = std_len)
+early = pred - timedelta(days = round(std_len))
 if (early < today):
     early = today
 
