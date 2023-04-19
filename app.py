@@ -85,16 +85,6 @@ fig.update_layout(
     title=dict(text='Distribution of cycle lengths')
 )
 
-# histogram of cycle lengths
-# cycle_hist = px.histogram(
-#     x = lengths,
-#     title = "Distribution of cycle lengths",
-#     color_discrete_sequence = ['#2da84a'],
-#     opacity = 0.6,
-#     range_x = [min(lengths) - 2, max(lengths) + 2],
-#     marginal = "violin"
-# )
-
 cycle_hist = go.Figure()
 cycle_hist.add_trace(go.Histogram(
     x=lengths,
@@ -107,7 +97,7 @@ cycle_hist.add_trace(go.Histogram(
 cycle_hist.update_layout(
     xaxis=dict(title='Length in days'),
     yaxis=dict(title='Count'),
-    title=dict(text='Distribution of period lengths')
+    title=dict(text='Distribution of cycle lengths')
 )
 
 # boxplot of period lengths
@@ -124,7 +114,6 @@ period_length.update_layout(
     xaxis=dict(title='Length in days', zeroline=False),
     title=dict(text='Distribution of period lengths')
 )
-
 
 day_num = (today - last_date).days + 1
 
@@ -165,9 +154,47 @@ app.layout = html.Div([
     dcc.Graph(id ="hist-lengths", figure=cycle_hist),
     dcc.Graph(id="box-lengths", figure=fig),
     dcc.Graph(id="period-lengths", figure=period_length),
-    html.Footer("Built with lots of love ❤️")
 
+    html.H2("Submit new entry"),
+    dcc.DatePickerSingle(
+        id='date-picker-single',
+        max_date_allowed=date.today(),
+        initial_visible_month=date.today(),
+        clearable=True,
+        placeholder="Date"
+    ),
+    dcc.Input(
+        placeholder='Enter the length of the cycle',
+        type='number',
+        id='input-box',
+        min="0"
+    ),
+    dcc.Textarea(
+        id='textarea-example',
+        placeholder='Enter a description (optional)',
+        style={'width': '100%', 'height': 50}
+    ),
+    html.Button('Submit', id='button-example-1'),
+    html.Div(id='output-container-button',
+             children='Enter a value and press submit'),
+    html.Footer("Built with lots of love ❤️"),
 ])
+
+@app.callback(
+    dash.dependencies.Output('output-container-button', 'children'),
+    [dash.dependencies.Input('button-example-1', 'n_clicks')],
+    [dash.dependencies.State('date-picker-single', 'date')],
+    [dash.dependencies.State('input-box', 'value')],
+    [dash.dependencies.State('textarea-example', 'value')])
+def update_output(n_clicks, date, length, desc):
+    # TODO: nulls? error handling??
+    # TODO: if both date and length are None, have an alert that says "do you really wanna do this"
+
+    return 'Start date: {}, Length: {}, Desc: {}'.format(
+        date,
+        length,
+        desc,
+    )
 
 if __name__ == "__main__":
     app.run_server(debug=True)

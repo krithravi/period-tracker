@@ -12,7 +12,7 @@
     font-style: normal;
 }
 
-body {
+body, textarea, input {
 	font-family: Ubuntu, Helvetica, sans-serif;
 	line-height: 1.6;
 	font-size: 16px;
@@ -20,7 +20,6 @@ body {
 	max-width: 700px;
 	margin: 20px auto;
 	padding: 0px 15px;
-
 }
 
 .fleft {
@@ -44,4 +43,18 @@ pre {
 
 footer {
 	font-size: 14px;
+}
+
+input {
+	padding: 10px;
+	width: 300px;
+	margin: 10px;
+}
+
+button {
+	margin: 10px;
+	padding: 10px;
+	background-color: #4baf73;
+	color: white;
+	border: none;
 }
