@@ -31,6 +31,6 @@ After that, you'll get something like the following (based off the `good.csv` da
 ## Future
 More features coming soon!
 - I really want the calendar to have the relevant dates highlighted.
-- I'm looking to have a GUI way to supply/modify files (I'm guessing people won't want to edit a CSV every time).
+- I'm looking to have some error handling in the GUI way to supply/modify files
 - I'm also guessing people might want to track other symptoms, so I'll try to find a way to incorporate/visualize those as well!
 - If you have any other ideas or tips, feel free to add an issue!
