@@ -45,7 +45,7 @@ footer {
 	font-size: 14px;
 }
 
-input {
+input, textarea {
 	padding: 10px;
 	width: 300px;
 	margin: 10px;

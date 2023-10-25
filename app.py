@@ -9,6 +9,7 @@ from datetime import timedelta, date
 from math import ceil
 import calendar
 import sys
+from dash.dependencies import Input, Output, State
 ######################### END IMPORTS             #########################
 
 ######################### START USER MODIFICATION ######################### 
@@ -29,7 +30,7 @@ data['Date'] = pd.to_datetime(data['Date']).dt.date
 
 # sort by date just in case
 data = data.sort_values(by = 'Date')
-lengths = data.Date.diff().dropna().astype('timedelta64[D]')
+lengths = data.Date.diff().dropna().dt.days
 # lengths.name = 'Days'
 
 # filtering outliers by 1.5 IQR rule
@@ -156,6 +157,30 @@ app.layout = html.Div([
     dcc.Graph(id="period-lengths", figure=period_length),
 
     html.H2("Submit new entry"),
+    html.P("To submit a placeholder entry (if you forgot the date, for example), hit submit without entering a date or length."),
+    # dcc.Upload(
+    #     id='upload-data',
+    #     children=html.Div([
+    #         'Drag and Drop or ',
+    #         html.A('Select Data File')
+    #     ]),
+    #     style={
+    #         'width': '100%',
+    #         'height': '60px',
+    #         'lineHeight': '60px',
+    #         'borderWidth': '1px',
+    #         'borderStyle': 'dashed',
+    #         'borderRadius': '5px',
+    #         'textAlign': 'center',
+    #         'margin': '10px'
+    #     },
+    #     multiple=False
+    # ),
+
+    # dcc.ConfirmDialog(
+    #     id='confirm-danger',
+    #     message='Do you really want to add this data point? Either the start date is null or the length is 0',
+    # ),
     dcc.DatePickerSingle(
         id='date-picker-single',
         max_date_allowed=date.today(),
@@ -174,27 +199,66 @@ app.layout = html.Div([
         placeholder='Enter a description (optional)',
         style={'width': '100%', 'height': 50}
     ),
-    html.Button('Submit', id='button-example-1'),
+    html.Button('Submit', id='button-example-1', style={'cursor': 'pointer'}),
+    # html.Div(id='output-danger'),
     html.Div(id='output-container-button',
              children='Enter a value and press submit'),
     html.Footer("Built with lots of love ❤️"),
 ])
 
 @app.callback(
-    dash.dependencies.Output('output-container-button', 'children'),
-    [dash.dependencies.Input('button-example-1', 'n_clicks')],
-    [dash.dependencies.State('date-picker-single', 'date')],
-    [dash.dependencies.State('input-box', 'value')],
-    [dash.dependencies.State('textarea-example', 'value')])
+    Output('output-container-button', 'children'),
+    Input('button-example-1', 'n_clicks'),
+    State('date-picker-single', 'date'),
+    State('input-box', 'value'),
+    State('textarea-example', 'value'))
 def update_output(n_clicks, date, length, desc):
-    # TODO: nulls? error handling??
     # TODO: if both date and length are None, have an alert that says "do you really wanna do this"
 
-    return 'Start date: {}, Length: {}, Desc: {}'.format(
-        date,
-        length,
-        desc,
-    )
+    if date is not None and length is not None and length > 0:
+        append_string = ""
+        if desc:
+            append_string = date + ', ' + str(length) + ', ' + desc + '\n'
+        else:
+            append_string = date + ', ' + str(length) + ', ' + '\n'
+
+        f = open(filename, "a")  # append mode
+        f.write(append_string)
+        f.close()
+
+        return "Submitted!"
+        
+    return "Error: either the start date is undefined, or the length is <= 0"
+    
+    # return 'Start date: {}, Length: {}, Desc: {}'.format(
+    #     date,
+    #     length,
+    #     desc,
+    # )
+
+# @app.callback(
+#         Output('confirm-danger', 'displayed'),
+#         Input('button-example-1', 'n_clicks'),
+#         Input('input-box', 'value'),
+#         Input('date-picker-single', 'date'))
+# def display_confirm(submit, value, date):
+#     return submit and (value > 0 or date is None)
+
+
+# @app.callback(
+#         Output('output-danger', 'children'),
+#         Input('confirm-danger', 'submit_n_clicks'),
+#         State('date-picker-single', 'date'),
+#         State('input-box', 'value'),
+#         State('textarea-example', 'value'))
+# def new_update_output(submit_n_clicks, date, length, desc):
+#     if submit_n_clicks:
+#         print(filename, date, length, desc)
+#         f = open(filename, "a")  # append mode
+#         f.write(date + ',' + length + ',' + desc)
+#         f.close()
+
+#         return "Submitted!"
 
 if __name__ == "__main__":
     app.run_server(debug=True)
